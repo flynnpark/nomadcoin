@@ -44,7 +44,7 @@ const createNewBlock = data => {
   const newBlock = new Block(
     newBlockIndex,
     newHash,
-    previousHash,
+    previousBlock.hash,
     newTimestamp,
     data
   );
@@ -80,7 +80,7 @@ const isNewStructureValid = block => {
     typeof block.hash === 'string' &&
     typeof block.previousHash === 'string' &&
     typeof block.timestamp === 'number' &&
-    typeof block.date === 'string'
+    typeof block.data === 'string'
   );
 };
 
