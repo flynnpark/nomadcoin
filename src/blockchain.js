@@ -30,7 +30,7 @@ let blockchain = [genesisBlock];
 
 const getNewestBlock = () => blockchain[blockchain.length - 1];
 
-const getTimestamp = () => new Date().getTime() / 1000;
+const getTimestamp = () => Math.round(new Date().getTime() / 1000);
 
 const getBlockchain = () => blockchain;
 
@@ -127,6 +127,13 @@ const getBlocksHash = block =>
     block.nonce
   );
 
+const isTimestampValid = (newBlock, oldBlock) => {
+  return (
+    oldBlock.timestamp - 60 < newBlock.timestamp &&
+    newBlock.timestamp - 60 < getTimestamp()
+  );
+};
+
 const isBlockValid = (candidateBlock, latestBlock) => {
   if (!isBlockStructureValid(candidateBlock)) {
     console.log('The candidate block structure is not valid');
@@ -141,6 +148,9 @@ const isBlockValid = (candidateBlock, latestBlock) => {
     return false;
   } else if (getBlocksHash(candidateBlock) !== candidateBlock.hash) {
     console.log('The hash of this block is invalid');
+    return false;
+  } else if (!isTimestampValid(candidateBlock, latestBlock)) {
+    console.log('The timestamp of this block is dodgy');
     return false;
   }
   return true;
