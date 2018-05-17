@@ -141,7 +141,6 @@ const connectToPeers = newPeer => {
   });
 };
 
-// Exports
 module.exports = {
   startP2PServer,
   connectToPeers,
