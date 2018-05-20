@@ -23,9 +23,9 @@ class Transaction {
 }
 
 class UTxOut {
-  constructor(uTxOutId, uTxOutIndex, address, amount) {
-    this.uTxOutId = uTxOutId;
-    this.uTxOutIndex = uTxOutIndex;
+  constructor(txOutId, txOutIndex, address, amount) {
+    this.txOutId = txOutId;
+    this.txOutIndex = txOutIndex;
     this.address = address;
     this.amount = amount;
   }
@@ -43,12 +43,18 @@ const getTxId = tx => {
   return CryptoJS.SHA256(txInContent, txOutContent).toString();
 };
 
+const findUTxOut = (txOutId, txOutIndex, uTxOutList) => {
+  return uTxOutList.find(
+    uTxOut => uTxOut.txOutId === txOutId && uTxOut.txOutIndex === txOutIndex
+  );
+};
+
 const signTxIn = (tx, txInIndex, privateKey, uTxOut) => {
   const txIn = tx.txIns[txInIndex];
   const dataToSign = tx.id;
-  // TODO: Find Tx
-  const referencedUTxOut = null;
+  const referencedUTxOut = findUTxOut(txIn.txOutId, txIn.txOutIndex, uTxOuts);
   if (referencedUTxOut === null) {
     return;
   }
+  // TODO: Sign the txIn
 };
