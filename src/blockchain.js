@@ -1,8 +1,8 @@
 const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
 
-const BLOCK_GENERATION_INTERVAL = 10; // 10 블록마다 난이도를 조절
-const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // 10분마다 블록이 채굴되기를 기대
+const BLOCK_GENERATION_INTERVAL = 10; // 10 블록마다 난이도를 조절 함
+const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // 10분마다 블록이 채굴되기를 기대 함
 
 class Block {
   constructor(index, hash, previousHash, timestamp, data, difficulty, nonce) {
