@@ -103,10 +103,13 @@ const isTxInStructureValid = txIn => {
 
 const isAddressValid = address => {
   if (address.length !== 130) {
+    console.log('The address length is not the expected one');
     return false;
   } else if (address.match('[a-fA-F0-9]+$') === null) {
+    console.log(`The address doesn't match the hex patter`);
     return false;
   } else if (!address.startsWith('04')) {
+    console.log(`The address doesn't start with 04`);
     return false;
   } else {
     return true;
@@ -115,12 +118,16 @@ const isAddressValid = address => {
 
 const isTxOutStructureValid = txOut => {
   if (txOut === null) {
+    console.log('TxOut is null');
     return false;
   } else if (typeof txOut.address !== 'string') {
+    console.log(`The txOut doesn't have a valid string as address`);
     return false;
   } else if (!isAddressValid(txOut.address)) {
+    console.log(`The txOut doesn't have a valid address`);
     return false;
   } else if (typeof txOut.amount !== 'number') {
+    console.log(`The txOut doesn't have a valid amount`);
     return false;
   } else {
     return true;
@@ -151,3 +158,25 @@ const isTxStructureValid = tx => {
     return true;
   }
 };
+
+const validateTx = (tx, uTxOutList) => {
+  if (getTxId(tx) !== tx.id) {
+    return false;
+  }
+
+  const hasValidTxIns = // TODO
+
+  if (!hasValidTxIns) {
+    return false;
+  }
+
+  const amountInTxIns = // TODO
+
+  const amountInTxOuts = // TODO
+
+  if (amountInTxIns !== amountInTxOuts) {
+    return false;
+  } else {
+    return true;
+  }
+}
