@@ -85,7 +85,7 @@ const updateUTxOuts = (newTxs, uTxOutList) => {
 
 const isTxInStructureValid = txIn => {
   if (txIn === null) {
-    console.log('The txIn appears to be null')
+    console.log('The txIn appears to be null');
     return false;
   } else if (typeof txIn.signature !== 'string') {
     console.log(`The txIn doesn't have a valid signature`);
@@ -111,7 +111,7 @@ const isAddressValid = address => {
   } else {
     return true;
   }
-}
+};
 
 const isTxOutStructureValid = txOut => {
   if (txOut === null) {
@@ -125,7 +125,7 @@ const isTxOutStructureValid = txOut => {
   } else {
     return true;
   }
-}
+};
 
 const isTxStructureValid = tx => {
   if (typeof tx.id !== 'string') {
@@ -134,13 +134,17 @@ const isTxStructureValid = tx => {
   } else if (!(tx.txIns instanceof Array)) {
     console.log('The txIns are not an array');
     return false;
-  } else if() {
+  } else if (
+    !tx.txIns.map(isTxInStructureValid).reduce((a, b) => a && b, true)
+  ) {
     console.log('The structure of on of the txIn is not valid');
     return false;
-  } else if(!(tx.txOuts instanceof Array)) {
+  } else if (!(tx.txOuts instanceof Array)) {
     console.log('The txOuts are not an array');
     return false;
-  } else if() {
+  } else if (
+    !tx.txOut.map(isTxOutStructureValid).reduce((a, b) => a && b, true)
+  ) {
     console.log('The structure of on of the txOut is not valid');
     return false;
   } else {
