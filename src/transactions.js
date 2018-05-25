@@ -14,8 +14,8 @@ class TxOut {
 }
 
 class TxIn {
-  // Unspent TxOutId
-  // Unspent TxOutIndex
+  // TxOutId
+  // TxOutIndex
   // Signature
 }
 
@@ -259,5 +259,7 @@ const validateCoinbaseTx = (tx, blockIndex) => {
 module.exports = {
   getPublicKey,
   getTxId,
-  signTxIn
+  signTxIn,
+  txIn,
+  Transaction
 };
