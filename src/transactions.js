@@ -34,8 +34,6 @@ class UTxOut {
   }
 }
 
-let uTxOuts = [];
-
 const getTxId = tx => {
   const txInsContent = tx.txIns
     .map(txIn => (txIn.uTxOutId = txIn.txOutIndex))
@@ -264,7 +262,7 @@ module.exports = {
   getPublicKey,
   getTxId,
   signTxIn,
-  txIn,
-  Transaction,
-  txOut
+  TxIn,
+  TxOut,
+  Transaction
 };

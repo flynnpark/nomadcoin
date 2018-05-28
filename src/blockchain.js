@@ -1,5 +1,8 @@
 const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
+const Wallet = require('./wallet');
+
+const { getBalance, getPublicFromWallet } = Wallet;
 
 const BLOCK_GENERATION_INTERVAL = 10; // 10 블록마다 난이도를 조절 함
 const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // 10분마다 블록이 채굴되기를 기대 함
@@ -27,6 +30,8 @@ const genesisBlock = new Block(
 );
 
 let blockchain = [genesisBlock];
+
+let uTxOuts = [];
 
 const getNewestBlock = () => blockchain[blockchain.length - 1];
 
@@ -211,11 +216,14 @@ const addBlockToChain = candidateBlock => {
   }
 };
 
+const getAccountBalance = () => getBalance(getPublicFromWallet(), uTxOuts);
+
 module.exports = {
   addBlockToChain,
   createNewBlock,
   getBlockchain,
   getNewestBlock,
   isBlockStructureValid,
-  replaceChain
+  replaceChain,
+  getAccountBalance
 };
