@@ -4,7 +4,14 @@ const fs = require('fs');
 const _ = require('lodash');
 const Transactions = require('./transactions');
 
-const { getPublicKey, getTxId, signTxIn, txIn, Transaction } = Transactions;
+const {
+  getPublicKey,
+  getTxId,
+  signTxIn,
+  txIn,
+  Transaction,
+  TxOut
+} = Transactions;
 
 const ec = new Elliptic.ec('secp256k1');
 
@@ -57,6 +64,16 @@ const findAmountInUTxOuts = (amountNeeded, myUTxOuts) => {
   return false;
 };
 
+const createTxOuts = (receiverAddress, myAddress, amount, leftOverAmount) => {
+  const receiverTxOut = new TxOut(receiverAddress, amount);
+  if (leftOverAmount === 0) {
+    return [receiverTxOut];
+  } else {
+    const leftOverTxOut = new TxOut(myAddress, leftOverAmount);
+    return [receiverTxOut, leftOverTxOut];
+  }
+};
+
 const createTx = (receiverAddress, amount, privateKey, uTxOutList) => {
   const myAddress = getPublicKey(privateKey);
   const myUTxOuts = uTxOutList.filter(uTxOut => uTxOut.address === myAddress);
@@ -75,7 +92,13 @@ const createTx = (receiverAddress, amount, privateKey, uTxOutList) => {
 
   const tx = new Transaction();
   tx.txIns = unsignedTxIns;
-  tx.txOuts = 
+  tx.txOuts = createTxOuts(receiverAddress, myAddress, amount, leftOverAmount);
+  tx.id = getTxId(tx);
+  tx.txIns = tx.txIns.map((txIn, index) => {
+    txIn.signature = signTxIn(tx, index, privateKey, uTxOutList);
+    return txIn;
+  });
+  return tx;
 };
 
 module.exports = {
