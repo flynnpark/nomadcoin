@@ -35,13 +35,13 @@ class UTxOut {
 }
 
 const getTxId = tx => {
-  const txInsContent = tx.txIns
-    .map(txIn => (txIn.uTxOutId = txIn.txOutIndex))
+  const txInContent = tx.txIns
+    .map(txIn => (txIn.TxOutId = txIn.txOutIndex))
     .reduce((a, b) => a + b, '');
   const txOutContent = tx.txOuts
     .map(txOut => txOut.address + txOut.amount)
     .reduce((a, b) => a + b, '');
-  return CryptoJS.SHA256(txInContent, txOutContent).toString();
+  return CryptoJS.SHA256(txInContent + txOutContent + tx.timestamp).toString();
 };
 
 const findUTxOut = (txOutId, txOutIndex, uTxOutList) => {
@@ -263,8 +263,8 @@ const createCoinbaseTx = (address, blockIndex) => {
   const txIn = new TxIn();
   txIn.signature = '';
   txIn.txOutId = blockIndex;
-  tx.txIns[txIn];
-  tx.txOut = [new TxOut(address, COINBASE_AMOUNT)];
+  tx.txIns = [txIn];
+  tx.txOuts = [new TxOut(address, COINBASE_AMOUNT)];
   tx.id = getTxId(tx);
   return tx;
 };
