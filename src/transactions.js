@@ -37,7 +37,7 @@ class UTxOut {
 
 const getTxId = tx => {
   const txInContent = tx.txIns
-    .map(txIn => (txIn.TxOutId = txIn.txOutIndex))
+    .map(txIn => (txIn.txOutId = txIn.txOutIndex))
     .reduce((a, b) => a + b, '');
   const txOutContent = tx.txOuts
     .map(txOut => txOut.address + txOut.amount)
@@ -284,13 +284,13 @@ const hasDuplicates = txIns => {
     .includes(true);
 };
 
-const validateBlockTx = (tx, uTxOutlist, blockIndex) => {
-  const coinbaseTx = tx[0];
-  if (!validateCoinbaseTx(tx, blockIndex)) {
+const validateBlockTxs = (txs, uTxOutlist, blockIndex) => {
+  const coinbaseTx = txs[0];
+  if (!validateCoinbaseTx(txs, blockIndex)) {
     console.log('Coinbase Tx is invalid');
     return false;
   }
-  const txIns = _(tx)
+  const txIns = _(txs)
     .map(tx => tx.Ins)
     .flatten()
     .value();
@@ -298,11 +298,15 @@ const validateBlockTx = (tx, uTxOutlist, blockIndex) => {
     console.log('Found duplicated txIns');
     return false;
   }
-  const nonCoinbaseTxs = tx.slice(1);
+  const nonCoinbaseTxs = txs.slice(1);
+
+  return nonCoinbaseTxs
+    .map(tx => validateTx(tx, uTxOutList))
+    .reduce((a, b) => a + b, true);
 };
 
 const processTxs = (txs, uTxOutList, blockIndex) => {
-  if (!validateBlockTx(tx, uTxOutlist, blockIndex)) {
+  if (!validateBlockTxs(txs, uTxOutList, blockIndex)) {
     return null;
   }
   return updateUTxOuts(txs, uTxOutList);
@@ -315,5 +319,6 @@ module.exports = {
   TxIn,
   TxOut,
   Transaction,
-  createCoinbaseTx
+  createCoinbaseTx,
+  processTxs
 };

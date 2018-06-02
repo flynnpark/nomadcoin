@@ -3,7 +3,7 @@ const hexToBinary = require('hex-to-binary');
 const Transactions = require('./transactions');
 const Wallet = require('./wallet');
 
-const { createCoinbaseTx } = Transactions;
+const { createCoinbaseTx, processTxs } = Transactions;
 const { getBalance, getPublicFromWallet } = Wallet;
 
 const BLOCK_GENERATION_INTERVAL = 10; // 10 블록마다 난이도를 조절 함
@@ -220,7 +220,19 @@ const replaceChain = candidateChain => {
 
 const addBlockToChain = candidateBlock => {
   if (isBlockValid(candidateBlock, getNewestBlock())) {
-    getBlockchain().push(candidateBlock);
+    const processedTxs = processTxs(
+      candidateBlock.data,
+      uTxOuts,
+      candidateBlock.index
+    );
+    if (processedTxs === null) {
+      console.log(`Couldn't process Txs`);
+      return false;
+    } else {
+      getBlockchain().push(candidateBlock);
+      uTxOuts = processedTxs;
+      return true;
+    }
     return true;
   } else {
     return false;
