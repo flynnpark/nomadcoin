@@ -1,5 +1,6 @@
 const CryptoJS = require('crypto-js');
 const Elliptic = require('elliptic');
+const _ = require('lodash');
 const Utils = require('./utils');
 
 const ec = new Elliptic.ec('secp256k1');
@@ -267,6 +268,30 @@ const createCoinbaseTx = (address, blockIndex) => {
   tx.txOuts = [new TxOut(address, COINBASE_AMOUNT)];
   tx.id = getTxId(tx);
   return tx;
+};
+
+const validateBlockTx = (tx, uTxOutlist, blockIndex) => {
+  const coinbaseTx = tx[0];
+  if (!validateCoinbaseTx(tx, blockIndex)) {
+    console.log('Coinbase Tx is invalid');
+    return false;
+  }
+  const txIns = _(tx)
+    .map(tx => tx.Ins)
+    .flatten()
+    .value();
+
+  if (/* Check if the txIns are duplicated */) {
+    console.log('Found duplicated txIns');
+    return false;
+  }
+};
+
+const processTxs = (txs, uTxOutList, blockIndex) => {
+  if (!validateBlockTx(tx, uTxOutlist, blockIndex)) {
+    return null;
+  }
+  return updateUTxOuts(txs, uTxOutList);
 };
 
 module.exports = {
