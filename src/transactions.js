@@ -37,7 +37,7 @@ class UTxOut {
 
 const getTxId = tx => {
   const txInContent = tx.txIns
-    .map(txIn => (txIn.txOutId = txIn.txOutIndex))
+    .map(txIn => txIn.txOutId + txIn.txOutIndex)
     .reduce((a, b) => a + b, '');
   const txOutContent = tx.txOuts
     .map(txOut => txOut.address + txOut.amount)
@@ -81,11 +81,11 @@ const getPublicKey = privateKey => {
 
 const updateUTxOuts = (newTxs, uTxOutList) => {
   const newUTxOuts = newTxs
-    .map(tx => {
-      tx.txOuts.map((txOut, index) => {
-        new UTxOut(tx.id, index, txOut.address, txOut.amount);
-      });
-    })
+    .map(tx =>
+      tx.txOuts.map(
+        (txOut, index) => new UTxOut(tx.id, index, txOut.address, txOut.amount)
+      )
+    )
     .reduce((a, b) => a.concat(b), []);
 
   const spentTxOuts = newTxs
@@ -263,7 +263,8 @@ const createCoinbaseTx = (address, blockIndex) => {
   const tx = new Transaction();
   const txIn = new TxIn();
   txIn.signature = '';
-  txIn.txOutId = blockIndex;
+  txIn.txOutId = '';
+  txIn.txOutIndex = blockIndex;
   tx.txIns = [txIn];
   tx.txOuts = [new TxOut(address, COINBASE_AMOUNT)];
   tx.id = getTxId(tx);
@@ -286,12 +287,12 @@ const hasDuplicates = txIns => {
 
 const validateBlockTxs = (txs, uTxOutlist, blockIndex) => {
   const coinbaseTx = txs[0];
-  if (!validateCoinbaseTx(txs, blockIndex)) {
+  if (!validateCoinbaseTx(coinbaseTx, blockIndex)) {
     console.log('Coinbase Tx is invalid');
     return false;
   }
   const txIns = _(txs)
-    .map(tx => tx.Ins)
+    .map(tx => tx.txIns)
     .flatten()
     .value();
   if (hasDuplicates(txIns)) {
