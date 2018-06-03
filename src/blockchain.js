@@ -5,7 +5,7 @@ const Mempool = require('./mempool');
 const Transactions = require('./transactions');
 const Wallet = require('./wallet');
 
-const { addToMempool } = Mempool;
+const { getMempool, addToMempool } = Mempool;
 const { createCoinbaseTx, processTxs } = Transactions;
 const {
   getBalance,
@@ -59,7 +59,7 @@ const createNewBlock = () => {
     getPublicFromWallet(),
     getNewestBlock().index + 1
   );
-  const blockData = [coinbaseTx];
+  const blockData = [coinbaseTx].concat(getMempool());
   return createNewRawBlock(blockData);
 };
 
@@ -254,6 +254,7 @@ const getAccountBalance = () => getBalance(getPublicFromWallet(), uTxOuts);
 const sendTx = (address, amount) => {
   const tx = createTx(address, amount, getPrivateFromWallet(), getUTxOutList());
   addToMempool(tx, getUTxOutList());
+  return tx;
 };
 
 module.exports = {

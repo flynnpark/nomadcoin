@@ -8,7 +8,7 @@ const {
   getPublicKey,
   getTxId,
   signTxIn,
-  txIn,
+  TxIn,
   Transaction,
   TxOut
 } = Transactions;
@@ -60,7 +60,7 @@ const findAmountInUTxOuts = (amountNeeded, myUTxOuts) => {
       return { includedUTxOuts, leftOverAmount };
     }
   }
-  throw Error('Not enough founds');
+  throw Error('Not enough funds');
   return false;
 };
 

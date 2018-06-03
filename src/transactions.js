@@ -167,7 +167,7 @@ const isTxStructureValid = tx => {
     console.log('The txOuts are not an array');
     return false;
   } else if (
-    !tx.txOut.map(isTxOutStructureValid).reduce((a, b) => a && b, true)
+    !tx.txOuts.map(isTxOutStructureValid).reduce((a, b) => a && b, true)
   ) {
     console.log('The structure of on of the txOut is not valid');
     return false;

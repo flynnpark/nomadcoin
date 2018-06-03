@@ -3,7 +3,9 @@ const Transactions = require('./transactions');
 
 const { validateTx } = Transactions;
 
-let momPool = [];
+let mempool = [];
+
+const getMempool = () => _.cloneDeep(mempool);
 
 const getTxInsInPool = mempool =>
   _(mempool)
@@ -40,5 +42,6 @@ const addToMempool = (tx, uTxOutList) => {
 };
 
 module.exports = {
+  getMempool,
   addToMempool
 };
