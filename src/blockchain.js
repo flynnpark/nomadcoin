@@ -263,5 +263,6 @@ module.exports = {
   getNewestBlock,
   isBlockStructureValid,
   replaceChain,
-  getAccountBalance
+  getAccountBalance,
+  sendTx
 };
