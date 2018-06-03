@@ -5,14 +5,14 @@ const { validateTx } = Transactions;
 
 let momPool = [];
 
-const getTxInsInPool = memPool =>
-  _(memPool)
+const getTxInsInPool = mempool =>
+  _(mempool)
     .map(tx => tx.txIns)
     .flatten()
     .value();
 
-const isTxValidForPool = (tx, memPool) => {
-  const txInsInPool = getTxInsInPool(memPool);
+const isTxValidForPool = (tx, mempool) => {
+  const txInsInPool = getTxInsInPool(mempool);
 
   const isTxInAlreadyInPool = (txIns, txIn) =>
     _.find(txIns, txInInPool => {
@@ -30,15 +30,15 @@ const isTxValidForPool = (tx, memPool) => {
   return true;
 };
 
-const addToMemPool = (tx, uTxOutList) => {
+const addToMempool = (tx, uTxOutList) => {
   if (!validateTx(tx, uTxOutList)) {
     throw Error('This tx is invalid. Will not add it to pool');
-  } else if (!isTxValidForPool(tx, memPool)) {
+  } else if (!isTxValidForPool(tx, mempool)) {
     throw Error('This tx is invalid for the pool. Will not add it.');
   }
-  memPool.push(tx);
+  mempool.push(tx);
 };
 
 module.exports = {
-  addToMemPool
+  addToMempool
 };

@@ -1,10 +1,18 @@
 const CryptoJS = require('crypto-js');
+const _ = require('lodash');
 const hexToBinary = require('hex-to-binary');
+const Mempool = require('./mempool');
 const Transactions = require('./transactions');
 const Wallet = require('./wallet');
 
+const { addToMempool } = Mempool;
 const { createCoinbaseTx, processTxs } = Transactions;
-const { getBalance, getPublicFromWallet } = Wallet;
+const {
+  getBalance,
+  getPublicFromWallet,
+  createTx,
+  getPrivateFromWallet
+} = Wallet;
 
 const BLOCK_GENERATION_INTERVAL = 10; // 10 블록마다 난이도를 조절 함
 const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // 10분마다 블록이 채굴되기를 기대 함
@@ -239,7 +247,14 @@ const addBlockToChain = candidateBlock => {
   }
 };
 
+const getUTxOutList = () => _.cloneDeep(uTxOuts);
+
 const getAccountBalance = () => getBalance(getPublicFromWallet(), uTxOuts);
+
+const sendTx = (address, amount) => {
+  const tx = createTx(address, amount, getPrivateFromWallet(), getUTxOutList());
+  addToMempool(tx, getUTxOutList());
+};
 
 module.exports = {
   addBlockToChain,
