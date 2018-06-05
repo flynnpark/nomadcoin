@@ -32,6 +32,30 @@ const isTxValidForPool = (tx, mempool) => {
   return true;
 };
 
+const hasTxIn = (txIn, uTxOutList) => {
+  const foundTxIn = uTxOutList.find(
+    uTxOut =>
+      uTxOut.txOutId === txIn.txOutId && uTxOut.txOutIndex === txIn.txOutIndex
+  );
+  return foundTxIn !== undefined;
+};
+
+const updateMempool = uTxOutList => {
+  const invalidTxs = [];
+
+  for (const tx of mempool) {
+    for (const txIn of tx.txIns) {
+      if (!hasTxIn(txIn, uTxOutList)) {
+        invalidTxs.push(tx);
+        break;
+      }
+    }
+  }
+  if (invalidTxs.length > 0) {
+    mempool = _.without(mempool, ...invalidTxs);
+  }
+};
+
 const addToMempool = (tx, uTxOutList) => {
   if (!validateTx(tx, uTxOutList)) {
     throw Error('This tx is invalid. Will not add it to pool');
@@ -43,5 +67,6 @@ const addToMempool = (tx, uTxOutList) => {
 
 module.exports = {
   getMempool,
-  addToMempool
+  addToMempool,
+  updateMempool
 };

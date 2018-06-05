@@ -285,7 +285,7 @@ const hasDuplicates = txIns => {
     .includes(true);
 };
 
-const validateBlockTxs = (txs, uTxOutlist, blockIndex) => {
+const validateBlockTxs = (txs, uTxOutList, blockIndex) => {
   const coinbaseTx = txs[0];
   if (!validateCoinbaseTx(coinbaseTx, blockIndex)) {
     console.log('Coinbase Tx is invalid');

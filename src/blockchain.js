@@ -5,7 +5,7 @@ const Mempool = require('./mempool');
 const Transactions = require('./transactions');
 const Wallet = require('./wallet');
 
-const { getMempool, addToMempool } = Mempool;
+const { getMempool, addToMempool, updateMempool } = Mempool;
 const { createCoinbaseTx, processTxs } = Transactions;
 const {
   getBalance,
@@ -239,6 +239,7 @@ const addBlockToChain = candidateBlock => {
     } else {
       getBlockchain().push(candidateBlock);
       uTxOuts = processedTxs;
+      updateMempool(uTxOuts);
       return true;
     }
     return true;
