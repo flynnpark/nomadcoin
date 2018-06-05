@@ -3,10 +3,12 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const Blockchain = require('./blockchain');
 const P2P = require('./p2p');
+const Mempool = require('./mempool');
 const Wallet = require('./wallet');
 
 const { getBlockchain, createNewBlock, getAccountBalance, sendTx } = Blockchain;
 const { startP2PServer, connectToPeers } = P2P;
+const { getMempool } = Mempool;
 const { initWallet } = Wallet;
 
 const PORT = process.env.HTTP_PORT || 3000;
@@ -38,7 +40,9 @@ app.get('/me/balance', (req, res) => {
 });
 app
   .route('/transactions')
-  .get((req, res) => {})
+  .get((req, res) => {
+    res.send(getMempool());
+  })
   .post((req, res) => {
     try {
       const { body: { address, amount } } = req;
