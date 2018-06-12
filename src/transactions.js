@@ -181,7 +181,7 @@ const validateTxIn = (txIn, tx, uTxOutList) => {
     uTxOut =>
       uTxOut.txOutId === txIn.txOutId && uTxOut.txOutIndex === txIn.txOutIndex
   );
-  if (wantedTxOut === null) {
+  if (wantedTxOut === undefined) {
     console.log(`Didn't find the wanted uTxOut, the tx:${tx} is invalid`);
     return false;
   } else {

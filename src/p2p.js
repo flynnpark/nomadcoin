@@ -51,10 +51,10 @@ const getAllMempool = () => {
   };
 };
 
-const mempoolResponse = () => {
+const mempoolResponse = data => {
   return {
-    tyep: MEMPOOL_RESPONSE,
-    data: null
+    type: MEMPOOL_RESPONSE,
+    data
   };
 };
 
@@ -78,8 +78,8 @@ const initSocketConnection = ws => {
   handleSocketError(ws);
   sendMessage(ws, getLatest());
   setTimeout(() => {
-    sendMessage(ws, getAllMempool(), 1000);
-  });
+    sendMessage(ws, getAllMempool());
+  }, 1000);
 };
 
 const parseData = data => {
