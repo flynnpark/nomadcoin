@@ -7,10 +7,16 @@ const P2P = require('./p2p');
 const Mempool = require('./mempool');
 const Wallet = require('./wallet');
 
-const { getBlockchain, createNewBlock, getAccountBalance, sendTx } = Blockchain;
+const {
+  getBlockchain,
+  createNewBlock,
+  getAccountBalance,
+  sendTx,
+  getUTxOutList
+} = Blockchain;
 const { startP2PServer, connectToPeers } = P2P;
 const { getMempool } = Mempool;
-const { initWallet, getPublicFromWallet } = Wallet;
+const { initWallet, getPublicFromWallet, getBalance } = Wallet;
 
 const PORT = process.env.HTTP_PORT || 3000;
 
@@ -29,6 +35,18 @@ app
     res.send(newBlock);
   });
 
+app.get('/blocks/:hash', (req, res) => {
+  const {
+    params: { hash }
+  } = req;
+  const block = _.find(getBlockchain(), { hash });
+  if (block === undefined) {
+    res.status(400).send('Block not found');
+  } else {
+    res.send(block);
+  }
+});
+
 app.post('/peers', (req, res) => {
   const {
     body: { peer }
@@ -44,18 +62,6 @@ app.get('/me/balance', (req, res) => {
 
 app.get('/me/address', (req, res) => {
   res.send(getPublicFromWallet());
-});
-
-app.get('/blocks/:hash', (req, res) => {
-  const {
-    params: { hash }
-  } = req;
-  const block = _.find(getBlockchain(), { hash });
-  if (block === undefined) {
-    res.status(400).send('Block not found');
-  } else {
-    res.send(block);
-  }
 });
 
 app
@@ -78,6 +84,26 @@ app
       res.status(400).send(e.message);
     }
   });
+
+app.get('/transactions/:id', (req, res) => {
+  const tx = _(getBlockchain())
+    .map(blocks => blocks.data)
+    .flatten()
+    .find({ id: req.params.id });
+  if (tx === undefined) {
+    res.status(400).send('Transaction not found');
+  } else {
+    res.send(tx);
+  }
+});
+
+app.get('/address/:address', (req, res) => {
+  const {
+    params: { address }
+  } = req;
+  const balance = getBalance(address, getUTxOutList());
+  res.send({ balance });
+});
 
 const server = app.listen(PORT, () =>
   console.log(`Nomadcoin HTTP Server Running on port ${PORT} ✅`)
