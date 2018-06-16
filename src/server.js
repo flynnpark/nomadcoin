@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const _ = require('lodash');
 const Blockchain = require('./blockchain');
 const P2P = require('./p2p');
 const Mempool = require('./mempool');
@@ -29,7 +30,9 @@ app
   });
 
 app.post('/peers', (req, res) => {
-  const { body: { peer } } = req;
+  const {
+    body: { peer }
+  } = req;
   connectToPeers(peer);
   res.send();
 });
@@ -43,6 +46,18 @@ app.get('/me/address', (req, res) => {
   res.send(getPublicFromWallet());
 });
 
+app.get('/blocks/:hash', (req, res) => {
+  const {
+    params: { hash }
+  } = req;
+  const block = _.find(getBlockchain(), { hash });
+  if (block === undefined) {
+    res.status(400).send('Block not found');
+  } else {
+    res.send(block);
+  }
+});
+
 app
   .route('/transactions')
   .get((req, res) => {
@@ -50,7 +65,9 @@ app
   })
   .post((req, res) => {
     try {
-      const { body: { address, amount } } = req;
+      const {
+        body: { address, amount }
+      } = req;
       if (address === undefined || amount === undefined) {
         throw Error('Please specify and address and an amount');
       } else {
