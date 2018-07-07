@@ -143,7 +143,7 @@ const handleBlockchainResponse = receivedBlocks => {
   }
   const latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
   if (!isBlockStructureValid(latestBlockReceived)) {
-    console.log('The block structure of the block received is not valid');
+    console.log('The structure of the block received is not valid');
     return;
   }
   const newestBlock = getNewestBlock();
